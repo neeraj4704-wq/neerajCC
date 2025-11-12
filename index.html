@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCTE Inventory Management</title>
+    <link rel="stylesheet" href="Project.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+</head>
+<body>
+
+    <div id="login-page">
+        <div class="login-container">
+            <h2>PCTE Inventory Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+                <p id="login-error" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="container hidden" id="app-container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <img src="no bg.png" alt="PCTE Inventory Logo">
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="#" class="nav-link active" data-page="dashboard">
+                    <span class="material-icons-sharp">grid_view</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="#" class="nav-link" data-page="inventory">
+                    <span class="material-icons-sharp">inventory</span>
+                    <h3>Inventory</h3>
+                </a>
+                 <a href="#" class="nav-link" data-page="reports">
+                    <span class="material-icons-sharp">report</span>
+                    <h3>Reports</h3>
+                </a>
+                <a href="#" id="logoutBtn">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <div class="top-bar">
+                <h1>Dashboard</h1>
+                <div class="theme-toggler">
+                      <span class="material-icons-sharp active">light_mode</span>
+                      <span class="material-icons-sharp">dark_mode</span>
+                </div>
+            </div>
+
+            <div id="dashboard-page" class="page active">
+                <div class="insights">
+                    <div class="card">
+                        <span class="material-icons-sharp">inventory_2</span>
+                        <div class="middle">
+                            <h3>Total Items</h3>
+                            <h1 id="total-items">0</h1>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <span class="material-icons-sharp">bar_chart</span>
+                        <div class="middle">
+                            <h3>Total Value</h3>
+                            <h1 id="total-value">₹0.00</h1>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <span class="material-icons-sharp">warning</span>
+                        <div class="middle">
+                            <h3>Low Stock</h3>
+                            <h1 id="low-stock-items">0</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Items by Category</h3>
+                        <canvas id="categoryPieChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Top 5 Most Valuable Items</h3>
+                        <canvas id="topItemsBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="inventory-page" class="page">
+                <div class="inventory-controls">
+                    <div class="search-filter">
+                        <input type="text" id="searchInput" placeholder="Search by name...">
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                        </select>
+                    </div>
+                    <button id="addItemBtn" class="btn-primary">Add New Item</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total Value</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="reports-page" class="page">
+                <h2>Generate Reports</h2>
+                <div class="report-options">
+                    <button class="btn-secondary" id="exportCsvBtn">Export Full Inventory (CSV)</button>
+                    <div>
+                        <label for="importCsvInput" class="btn-secondary">Import from CSV</label>
+                        <input type="file" id="importCsvInput" accept=".csv" style="display: none;">
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modalTitle">Add New Item</h2>
+            <form id="itemForm">
+                <input type="hidden" id="itemId">
+                <div class="form-group">
+                    <label for="itemName">Item Name</label>
+                    <input type="text" id="itemName" required>
+                </div>
+                <div class="form-group">
+                    <label for="itemCategory">Category</label>
+                    <select id="itemCategory" required>
+                        <option value="Lab Equipment">Lab Equipment</option>
+                        <option value="Office Supplies">Office Supplies</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Sports">Sports</option>
+                    </select>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="itemQuantity">Quantity</label>
+                        <input type="number" id="itemQuantity" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemPrice">Unit Price (₹)</label>
+                        <input type="number" id="itemPrice" required min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reorderLevel">Reorder Level</label>
+                    <input type="number" id="reorderLevel" required min="0">
+                </div>
+                 <div class="form-group">
+                    <label for="itemSupplier">Supplier (Optional)</label>
+                    <input type="text" id="itemSupplier">
+                </div>
+                <button type="submit" class="btn-primary" id="formSubmitBtn">Add Item</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="detailsModalTitle">Item Details</h2>
+            <div id="detailsModalBody">
+                </div>
+            <h3>Transaction History</h3>
+            <div class="table-container" id="historyTableContainer">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Change</th>
+                            <th>New Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="Projrct.js"></script>
+</body>
+</html>
